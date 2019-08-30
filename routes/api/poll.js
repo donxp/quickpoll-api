@@ -65,4 +65,48 @@ router.post('/create', (req, res) => {
     }
 })
 
+router.post('/vote', (req, res) => {
+    if(!req.body.answer_id) {
+        res.json({
+            success: false,
+            message: 'Answer not provided'
+        })
+    } else {
+        knex('votes').insert({
+            answer_id: req.body.answer_id
+        }).then(result => {
+            res.json({
+                success: true
+            })
+        }).catch(err => {
+            res.json({
+                success: false,
+                message: err
+            })
+        })
+    }
+})
+
+router.get('/votes/:id', (req, res) => {
+    if(req.params.id) {
+        knex.from('votes')
+        .select('answer_id', 'option').select(knex.raw('COUNT(*) as count'))
+        .innerJoin('poll_options', 'votes.answer_id', '=', 'poll_options.id')
+        .innerJoin('polls', 'poll_options.poll_id', '=', 'polls.id')
+        .where('poll_options.poll_id', req.params.id)
+        .groupBy('answer_id')
+        .then(result => {
+            res.json({
+                success: true,
+                votes: result
+            })
+        }).catch(err => {
+            res.json({
+                success: false,
+                message: err
+            })
+        })
+    }
+})
+
 module.exports = router
