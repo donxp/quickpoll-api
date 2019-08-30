@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node index",
-    "watch": "nodemon index"
+    "watch": "nodemon index",
+    "socket": "node socketserver",
+    "socketdev": "nodemon socketserver"
   },
   "author": "",
   "license": "MIT",
@@ -13,6 +15,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "knex": "^0.19.3",
+    "socket.io": "^2.2.0",
     "sqlite3": "^4.1.0"
   },
   "devDependencies": {

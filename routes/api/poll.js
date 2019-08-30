@@ -75,6 +75,7 @@ router.post('/vote', (req, res) => {
         knex('votes').insert({
             answer_id: req.body.answer_id
         }).then(result => {
+            global.io.emit('vote', req.body.answer_id)
             res.json({
                 success: true
             })
