@@ -4,9 +4,24 @@ const knex = require('../../db')
 
 router.get('/:id', (req, res) => {
     if(req.params.id) {
-        knex('polls').where('id', req.params.id).then(result => {
-            console.log(result)
-            res.send('ok')
+        knex('polls').where('id', req.params.id).first().then(result => {
+            return [knex('poll_options').where('poll_id', result.id), result.question]
+        }).spread((result, question) => {
+            const options = result.map(p => {
+                return {
+                    id: p.id,
+                    option: p.option
+                }
+            })
+            return {
+                question,
+                options
+            }
+        }).then(poll => {
+            res.json({
+                success: true,
+                poll
+            })
         })
     } else {
         res.json({
